@@ -6,7 +6,7 @@ use ApiPlatform\Doctrine\Orm\Paginator;
 use App\ApiResource\UserApi;
 use App\Attribute\SearchFilter;
 use App\Entity\User;
-use App\Enum\SearchFilterMethodSearch;
+use App\Enum\SearchFilterMethodSearchEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\QueryBuilder;
@@ -88,12 +88,12 @@ class UserRepository extends ServiceEntityRepository
         return  $qb;
     }
 
-    public function selectFilterLike(string $queryValue,SearchFilterMethodSearch $methodSearch): string
+    public function selectFilterLike(string $queryValue, SearchFilterMethodSearchEnum $methodSearch): string
     {
         return match($methodSearch){
-            SearchFilterMethodSearch::SEARCH_FILTER_METHOD_SEARCH_PARTIAL =>'%'.$queryValue.'%',
-            SearchFilterMethodSearch::SEARCH_FILTER_METHOD_SEARCH_END =>'%'.$queryValue,
-            SearchFilterMethodSearch::SEARCH_FILTER_METHOD_SEARCH_START =>$queryValue.'%',
+            SearchFilterMethodSearchEnum::SEARCH_FILTER_METHOD_SEARCH_PARTIAL =>'%'.$queryValue.'%',
+            SearchFilterMethodSearchEnum::SEARCH_FILTER_METHOD_SEARCH_END =>'%'.$queryValue,
+            SearchFilterMethodSearchEnum::SEARCH_FILTER_METHOD_SEARCH_START =>$queryValue.'%',
         };
     }
     public function filterPerPage(QueryBuilder $qb,int $page = 1): Paginator

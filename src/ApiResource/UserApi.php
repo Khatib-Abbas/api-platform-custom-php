@@ -12,7 +12,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Attribute\SearchFilter;
-use App\Enum\SearchFilterMethodSearch;
+use App\Enum\SearchFilterMethodSearchEnum;
 use App\Filter\UserFilterSwagger;
 use App\State\Processor\UserProcessor;
 use App\State\Provider\User\UserProvider;
@@ -48,8 +48,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 )]
 #[ApiFilter(UserFilterSwagger::class)]
 #[SearchFilter([
-    "firstName"=>SearchFilterMethodSearch::SEARCH_FILTER_METHOD_SEARCH_PARTIAL,
-    "lastName"=>SearchFilterMethodSearch::SEARCH_FILTER_METHOD_SEARCH_PARTIAL
+    "firstName"=>SearchFilterMethodSearchEnum::SEARCH_FILTER_METHOD_SEARCH_PARTIAL,
+    "lastName"=>SearchFilterMethodSearchEnum::SEARCH_FILTER_METHOD_SEARCH_PARTIAL
 ])]
 class UserApi
 {

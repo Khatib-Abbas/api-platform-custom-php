@@ -2,7 +2,7 @@
 
 namespace App\Enum;
 
-enum SearchFilterMethodSearch: string
+enum SearchFilterMethodSearchEnum: string
 {
     case SEARCH_FILTER_METHOD_SEARCH_PARTIAL  = 'partial';
     case SEARCH_FILTER_METHOD_SEARCH_START  = 'start';

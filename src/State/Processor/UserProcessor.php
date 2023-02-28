@@ -10,6 +10,8 @@ use ApiPlatform\State\ProcessorInterface;
 use ApiPlatform\Metadata\Put;
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Utils\ReflexionClass\UserReflexClass;
+use App\Utils\UtilsEntity;
 use Doctrine\ORM\EntityManagerInterface;
 use ReflectionClass;
 use ReflectionException;
@@ -17,16 +19,13 @@ use ReflectionException;
 class UserProcessor implements ProcessorInterface
 {
     public function __construct(
-        private readonly UserRepository $userRepository,private readonly EntityManagerInterface $manager)
+        private readonly UserRepository $userRepository,
+        private readonly EntityManagerInterface $manager,
+        private readonly UtilsEntity $utilsEntity
+    )
     {
     }
 
-    function iterateVisible() {
-        echo "MyClass::iterateVisible:\n";
-        foreach ($this as $key => $value) {
-            print "$key => $value\n";
-        }
-    }
 
     /**
      * @throws ReflectionException
@@ -36,21 +35,10 @@ class UserProcessor implements ProcessorInterface
 
         if($operation instanceof Post ){
             $user = new User();
-            $classDataAttributes = new ReflectionClass($data::class);
-            foreach ($classDataAttributes->getProperties() as $dataClassAttribute){
-                $dataProperty = new \ReflectionProperty($data::class, $dataClassAttribute->name);
-                if($dataProperty->getValue($data)){
-                    $classUserAttributes = new ReflectionClass($user::class);
-                    foreach ($classUserAttributes->getProperties() as $userClassAttribute){
-                        if($userClassAttribute->name === $dataClassAttribute->name){
-                            $userProperty = new \ReflectionProperty($user::class, $dataClassAttribute->name);
-                            $userProperty->setValue($user,$dataProperty->getValue($data));
-                        }
-                    }
-                }
+            if($this->utilsEntity->setUserObjectWithReflexion($data, $user, $operation::class)){
+                $this->userRepository->save($user, true);
             }
-            $this->userRepository->save( $user,true);
-            return  $user;
+            return $user;
         }
         if($operation instanceof Delete ){
             /**
@@ -74,25 +62,10 @@ class UserProcessor implements ProcessorInterface
              * @var User $user
              */
             $user = $this->manager->getRepository(User::class)->find($userPrevious->getId());
-            $needUpdate=false;
-            $classDataAttributes = new ReflectionClass($data::class);
-            foreach ($classDataAttributes->getProperties() as $dataClassAttribute){
-                $dataProperty = new \ReflectionProperty($data::class, $dataClassAttribute->name);
-                if($dataProperty->getValue($data)){
-                    $classUserAttributes = new ReflectionClass($data::class);
-                    foreach ($classUserAttributes->getProperties() as $userClassAttribute){
-                        if($userClassAttribute->name === $dataClassAttribute->name){
-                            $userProperty = new \ReflectionProperty($user::class, $dataClassAttribute->name);
-                            if($userProperty->getValue($user) !== $dataProperty->getValue($data)){
-                                $userProperty->setValue($user,$dataProperty->getValue($data));
-                                $needUpdate =true;
-                            }
-                        }
-                    }
-                }
+            if($this->utilsEntity->setUserObjectWithReflexion($data, $user, $operation::class)){
+                $this->userRepository->save( $user,true);
             }
-            if ($needUpdate) $this->userRepository->save( $user,true);
-           return  $user;
+            return $user;
         }
         return  null;
     }
