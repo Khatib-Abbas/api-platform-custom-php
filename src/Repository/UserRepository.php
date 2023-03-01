@@ -3,16 +3,19 @@
 namespace App\Repository;
 
 use ApiPlatform\Doctrine\Orm\Paginator;
+use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use App\ApiResource\UserApi;
 use App\Attribute\SearchFilter;
 use App\Entity\User;
 use App\Enum\SearchFilterMethodSearchEnum;
+use App\Utils\UtilsEntity;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator as DoctrinePaginator;
 use Doctrine\Persistence\ManagerRegistry;
 use ReflectionClass;
+use Symfony\Component\Uid\Uuid;
 
 
 /**
@@ -26,7 +29,7 @@ use ReflectionClass;
 class UserRepository extends ServiceEntityRepository
 {
     const ITEMS_PER_PAGE = 30;
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry,private UtilsEntity $utilsEntity)
     {
         parent::__construct($registry, User::class);
     }
@@ -70,10 +73,10 @@ class UserRepository extends ServiceEntityRepository
                      * Match Filters &  QueryParams
                      */
                     if($attributeName === $queryAttributeName){
-
                         foreach ($queryValues as $queryValue){
-                            $queryString .= "LOWER($alias.$attributeName) LIKE  LOWER(:$queryValue$attributeName)";
-                            $qb->setParameter("$queryValue$attributeName",$this->selectFilterLike($queryValue,$methodSearch));
+                           $paramName =  $this->utilsEntity->generateParameterName($attributeName);
+                            $queryString .= "LOWER($alias.$attributeName) LIKE  LOWER(:$paramName)";
+                            $qb->setParameter("$paramName",$this->selectFilterLike($queryValue,$methodSearch));
                             $queryString .= " OR ";
                         }
                     }
@@ -111,6 +114,7 @@ class UserRepository extends ServiceEntityRepository
     {
         return $qb ?: $this->createQueryBuilder('user');
     }
+
 //    /**
 //     * @return User[] Returns an array of User objects
 //     */

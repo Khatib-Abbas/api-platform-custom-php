@@ -51,6 +51,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     "firstName"=>SearchFilterMethodSearchEnum::SEARCH_FILTER_METHOD_SEARCH_PARTIAL,
     "lastName"=>SearchFilterMethodSearchEnum::SEARCH_FILTER_METHOD_SEARCH_PARTIAL
 ])]
+
 class UserApi
 {
     #[ApiProperty(identifier: true)]

@@ -13,6 +13,7 @@ use ReflectionProperty;
 
 class UtilsEntity
 {
+    private int $incrementedName = 1;
 
     /**
      * @throws ReflectionException
@@ -45,5 +46,11 @@ class UtilsEntity
 
         }
         return $needUpdate;
+    }
+
+
+    public function generateParameterName(string $name): string
+    {
+        return sprintf('%s_p%d', str_replace('.', '_', $name), $this->incrementedName++);
     }
 }
