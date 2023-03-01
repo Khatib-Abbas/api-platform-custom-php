@@ -2,17 +2,9 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiProperty;
-use ApiPlatform\Metadata\Patch;
-use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Put;
-use App\ApiResource\UserApi;
 use App\Repository\UserRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use ReflectionClass;
-use ReflectionException;
-use ReflectionProperty;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
 
@@ -27,7 +19,7 @@ class User
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     private ?Uuid $id = null;
 
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: false,options: ['comment'=>'lastName = Prénom'])]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: false,options: ['comment'=>'lastName = Nom'])]
     private string $firstName;
 
     #[ORM\Column(type: Types::STRING, length: 255, nullable: false,options: ['comment'=>'lastName = Prénom'])]

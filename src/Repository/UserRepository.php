@@ -52,7 +52,7 @@ class UserRepository extends ServiceEntityRepository
     {
 
         /**
-         * Retrieve Argument
+         * Retrieve Argument ATTRIBUTE
          */
         $class = new ReflectionClass(UserApi::class);
         $attributes = $class->getAttributes(SearchFilter::class);
@@ -72,7 +72,7 @@ class UserRepository extends ServiceEntityRepository
                     if($attributeName === $queryAttributeName){
 
                         foreach ($queryValues as $queryValue){
-                            $queryString .= "$alias.$attributeName LIKE :$queryValue$attributeName";
+                            $queryString .= "LOWER($alias.$attributeName) LIKE  LOWER(:$queryValue$attributeName)";
                             $qb->setParameter("$queryValue$attributeName",$this->selectFilterLike($queryValue,$methodSearch));
                             $queryString .= " OR ";
                         }
